@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Flux • TodoMVC</title>
+    <!--<link rel="stylesheet" href="todomvc-common/base.css">-->
+    <!--<link rel="stylesheet" href="css/app.css">-->
+    <link rel="stylesheet" href="css/screen.css">
+  </head>
+  <body>
+    <section id="todoapp"></section>
+
+    <main class="main">
+      <h1 class="section__title">Voice Player</h1>
+      <section class="content">
+        <h4 id="recognized"></h4>
+
+        <div id="myApp"></div>
+        <div class="search">
+          <h2 class="sub-title">Search</h2>
+          <form class="search__form" action="#">
+            <input id="search__input" type="text" value="numb"/>
+            <button>submit</button>
+          </form>
+          <div class="search__results"></div>
+        </div>
+      </section>
+      <aside class="info">
+        <h2 class="sub-title">Info</h2>
+
+        <div class="info__block">
+          <h3 class="info__hint">say for example:</h3>
+          <div class="info__content">"find umbrella" then "save track" then "play"</div>
+        </div>
+
+        <div class="info__block">
+          <h3 class="info__hint">recognition result:</h3>
+          <div class="info__content"><p class="recognition__results">no result</p></div>
+        </div>
+
+        <div class="info__block">
+          <h3 class="info__hint">commands:</h3>
+          <div class="info__content">
+            <ul class="commands__list">
+              <li>
+                <ul>
+                  <li>find *song</li>
+                  <li>search *song</li>
+                </ul>
+              </li>
+              <li>
+                <ul>
+                  <li>add song</li>
+                  <li>add track</li>
+                  <li>save song</li>
+                  <li>save track</li>
+                  <li>save songs</li>
+                  <li>save tracks</li>
+                </ul>
+              </li>
+              <li>
+                <ul>
+                  <li>next</li>
+                  <li>next song</li>
+                  <li>next track</li>
+                  <li>previous</li>
+                  <li>previous song</li>
+                  <li>previous track</li>
+                  <li>play</li>
+                  <li>pause</li>
+                  <li>stop</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </body>
+  <script src="js/bundle.js"></script>
+</html>
