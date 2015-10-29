@@ -1,42 +1,24 @@
-/**
- * Copyright (c) 2014-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
-
-var React = require('react');
-
+var React = require('react'),
+    PlayerActions = require('../actions/PlayerActions');
 
 var PlayerThumb = React.createClass({
-
-
-  /**
-   * @return {object}
-   */
-
-  //this.props.name
-  render: function() {
-    console.log(this.props.preview_url);
-    return (
-        <div className="playlist__item preview">
-          <p className="preview__title">{this.props.track.name}</p>
-          <img src={this.props.track.album.images[1].url} alt=""/>
-        </div>
-    );
+  _handleClick: function(e) {
+    e.preventDefault();
+    console.log(this.props.track);
+    PlayerActions.play();
   },
 
-  /**
-   * Event handler called within TodoTextInput.
-   * Defining this here allows TodoTextInput to be used in multiple places
-   * in different ways.
-   * @param {string} text
-   */
-  _onSave: function(text) {
-  }
+  render: function() {
+    var title = this.props.track.name,
+        thumb = this.props.track.album.images[1].url;
 
+    return (
+        <div onClick={this._handleClick} className="playlist__item preview">
+          <p className="preview__title">{title}</p>
+          <img src={thumb} alt=""/>
+        </div>
+    );
+  }
 });
 
 module.exports = PlayerThumb;

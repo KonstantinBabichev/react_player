@@ -19,15 +19,20 @@ var Footer = require('./Footer.react');
 var Header = require('./Header.react');
 var MainSection = require('./MainSection.react');
 var React = require('react');
+var ReactDOM = require('react-dom');
 var TodoStore = require('../stores/TodoStore');
+var PlayerStore = require('../stores/PlayerStore');
+var PlayerActions = require('../actions/PlayerActions');
 
 /**
  * Retrieve the current TODO data from the TodoStore
  */
 function getTodoState() {
   return {
-    allTodos: TodoStore.getAll(),
-    areAllComplete: TodoStore.areAllComplete()
+    //allTodos: TodoStore.getAll(),
+    //areAllComplete: TodoStore.areAllComplete()
+    tracks : PlayerStore.getAll(),
+    currentTrack : PlayerStore.getCurrentTrack()
   };
 }
 
@@ -42,10 +47,10 @@ var TodoApp = React.createClass({
 
   getInitialState: function () {
     console.info('TodoApp : getInitialState');
-    // return getTodoState();
-    return {
-      tracks : []
-    };
+    return getTodoState();
+    //return {
+    //  tracks : []
+    //};
   },
 
   componentDidMount: function () {
@@ -62,19 +67,20 @@ var TodoApp = React.createClass({
         .then(function (data) {
           if (data.tracks.items.length) {
             self.setState({tracks: data.tracks.items});
+            PlayerActions.setItems(data.tracks.items);
           }
         })
         .catch(function (error) {
           console.log('Request failed', error);
         });
 
-    // TodoStore.addChangeListener(this._onChange);
+    PlayerStore.addChangeListener(this._onChange);
 
   },
 
   componentWillUnmount: function () {
     console.info('TodoApp : componentWillUnmount');
-    // TodoStore.removeChangeListener(this._onChange);
+    PlayerStore.removeChangeListener(this._onChange);
   },
 
   /**
@@ -112,7 +118,7 @@ var TodoApp = React.createClass({
    */
   _onChange: function () {
     console.info('TodoApp : _onChange');
-    // this.setState(getTodoState());
+     this.setState(getTodoState());
   }
 
 });
