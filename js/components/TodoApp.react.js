@@ -1,36 +1,13 @@
-/**
- * Copyright (c) 2014-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- */
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-/**
- * This component operates as a "Controller-View".  It listens for changes in
- * the TodoStore and passes the new data to its children.
- */
+import Player from './Player.react';
+import PlayerThumb from './PlayerThumb.react';
+import PlayerStore from '../stores/PlayerStore';
+import PlayerActions from '../actions/PlayerActions';
 
-var Player = require('./Player.react');
-var PlayerThumb = require('./PlayerThumb.react');
-
-var Footer = require('./Footer.react');
-var Header = require('./Header.react');
-var MainSection = require('./MainSection.react');
-var React = require('react');
-var ReactDOM = require('react-dom');
-var TodoStore = require('../stores/TodoStore');
-var PlayerStore = require('../stores/PlayerStore');
-var PlayerActions = require('../actions/PlayerActions');
-
-/**
- * Retrieve the current TODO data from the TodoStore
- */
 function getTodoState() {
   return {
-    //allTodos: TodoStore.getAll(),
-    //areAllComplete: TodoStore.areAllComplete()
     tracks : PlayerStore.getAll(),
     currentTrack : PlayerStore.getCurrentTrack()
   };
@@ -42,15 +19,61 @@ function searchTracks(query, one) {
 
 var _todos = {};
 
+class TodoApp extends React.Component {
+  constructor() {
+    super();
+    this.render = this.render.bind(this);
+    this._onChange = this._onChange.bind(this);
+    this.state = getTodoState();
+  }
+  componentDidMount () {
+    console.info('TodoApp : componentDidMount');
+    var self = this;
+    var q = 'linkin park';
+    var url = 'https://api.spotify.com/v1/search';
+    var query = '?q=' + q + '&type=track';
 
-var TodoApp = React.createClass({
+    fetch(url + query)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.tracks.items.length) {
+            self.setState({tracks: data.tracks.items});
+            PlayerActions.setItems(data.tracks.items);
+          }
+        })
+        .catch(function (error) {
+          console.log('Request failed', error);
+        });
+
+    PlayerStore.addChangeListener(this._onChange);
+
+  }
+  componentWillUnmount () {
+    console.info('TodoApp : componentWillUnmount');
+    PlayerStore.removeChangeListener(this._onChange);
+  }
+  render () {
+    console.info('TodoApp : render');
+    return (
+        <div className="wrap">
+          <Player allTracks={this.state.tracks}/>
+        </div>
+    );
+  }
+  _onChange () {
+    console.info('TodoApp : _onChange');
+    console.info(this);
+    this.setState(getTodoState());
+  }
+}
+
+var TodoAppz = React.createClass({
 
   getInitialState: function () {
     console.info('TodoApp : getInitialState');
     return getTodoState();
-    //return {
-    //  tracks : []
-    //};
   },
 
   componentDidMount: function () {
@@ -113,9 +136,6 @@ var TodoApp = React.createClass({
   //  );
   //},
 
-  /**
-   * Event handler for 'change' events coming from the TodoStore
-   */
   _onChange: function () {
     console.info('TodoApp : _onChange');
      this.setState(getTodoState());
