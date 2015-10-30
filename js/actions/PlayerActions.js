@@ -97,6 +97,15 @@ var PlayerActions = {
     AppDispatcher.dispatch({
       actionType: PlayerConstants.PLAYER_PLAY
     });
+  },
+
+  /**
+   * Delete all the completed ToDos
+   */
+  start: function() {
+    AppDispatcher.dispatch({
+      actionType: PlayerConstants.PLAYER_INIT
+    });
   }
 
 };

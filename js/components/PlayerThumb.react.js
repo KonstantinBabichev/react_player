@@ -1,5 +1,5 @@
-var React = require('react'),
-    PlayerActions = require('../actions/PlayerActions');
+import React from 'react';
+import PlayerActions from '../actions/PlayerActions';
 
 var PlayerThumb = React.createClass({
   _handleClick: function(e) {
