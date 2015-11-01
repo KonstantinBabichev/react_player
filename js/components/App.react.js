@@ -6,6 +6,8 @@ import PlayerThumb from './PlayerThumb.react';
 import PlayerStore from '../stores/PlayerStore';
 import PlayerActions from '../actions/PlayerActions';
 
+import Search from './Search.react';
+
 function getTodoState() {
   return PlayerStore.getState();
 }
@@ -36,6 +38,7 @@ class App extends React.Component {
     return (
       <div className="wrap">
         <Player />
+        <Search />
       </div>
     );
   }

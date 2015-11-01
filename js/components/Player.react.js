@@ -5,30 +5,9 @@ import PlayerThumb from './PlayerThumb.react';
 import PlayerStore from '../stores/PlayerStore';
 import PlayerActions from '../actions/PlayerActions';
 
-function setItems(q = 'linkin park') {
-  return new Promise(function (resolve, reject) {
-    var baseUrl = 'https://api.spotify.com/v1/search',
-      query = '?q=' + q + '&type=track',
-      url = baseUrl + query;
-
-    fetch(url)
-      .then(response => response.json())
-      .then(function (data) {
-        if (data.tracks.items.length) {
-          resolve(data.tracks.items);
-        }
-      })
-      .catch(function (error) {
-        console.log('Request failed', error);
-        reject('Request failed', error);
-      });
-  });
-}
-
 function getPlayerState() {
   return PlayerStore.getState();
 }
-
 
 class Player extends React.Component {
   constructor() {
@@ -37,6 +16,13 @@ class Player extends React.Component {
     this.render = this.render.bind(this);
     this._onChange = this._onChange.bind(this);
     this.state = getPlayerState();
+  }
+
+  _handleThumbClick(item) {
+    console.warn('Player : _handleThumbClick');
+    var _playerAudio = new Audio();
+    _playerAudio.src = item.preview_url;
+    _playerAudio.play();
   }
 
   _play() {
@@ -69,11 +55,14 @@ class Player extends React.Component {
   }
 
   render() {
-    var tracks = this.state.tracks;
-    if (tracks.length < 1) return null;
+    console.log('Player : render');
+    var self = this,
+        tracks = this.state.tracks;
 
-    tracks = tracks.map(function(track) {
-      return <PlayerThumb key={track.id} track={track}/>;
+    //if (tracks.length < 1) return null;
+
+    tracks = tracks.map(function (track, i) {
+      return <PlayerThumb onClick={self._handleThumbClick.bind(this, track)} key={i} track={track}/>;
     });
 
     return (

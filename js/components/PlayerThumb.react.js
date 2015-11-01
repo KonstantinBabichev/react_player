@@ -2,18 +2,13 @@ import React from 'react';
 import PlayerActions from '../actions/PlayerActions';
 
 var PlayerThumb = React.createClass({
-  _handleClick: function(e) {
-    e.preventDefault();
-    console.log(this.props.track);
-    PlayerActions.play();
-  },
-
   render: function() {
-    var title = this.props.track.name,
-        thumb = this.props.track.album.images[1].url;
+    var track = this.props.track,
+        title = track.name,
+        thumb = track.album.images[0] ? track.album.images[0].url : "https://i.scdn.co/image/bda46f3c79f2df9bee2540ccab7e4582dc5b8a3b";
 
     return (
-        <div onClick={this._handleClick} className="playlist__item preview">
+        <div onClick={this.props.onClick} className="playlist__item preview">
           <p className="preview__title">{title}</p>
           <img src={thumb} alt=""/>
         </div>

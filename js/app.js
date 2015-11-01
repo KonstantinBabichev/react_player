@@ -8,5 +8,4 @@ ReactDOM.render(
   document.getElementById('todoapp')
 );
 
-
 //React.render(<SearchableTable data={data}/>, document.getElementById('searchableTable'));

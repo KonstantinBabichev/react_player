@@ -106,6 +106,13 @@ var PlayerActions = {
     AppDispatcher.dispatch({
       actionType: PlayerConstants.PLAYER_INIT
     });
+  },
+
+  addToPlayList: function(item) {
+    AppDispatcher.dispatch({
+      actionType: PlayerConstants.PLAYER_ADD,
+      item : item
+    });
   }
 
 };

@@ -4,49 +4,43 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
 import PlayerConstants from '../constants/PlayerConstants';
 
 var CHANGE_EVENT = 'change',
-  _tracks = [],
-  _currentTrack = {};
+    _tracks = getPlaylist(),
+    _currentTrack = {};
 
-function setInitialState() {
+function init() {
   return new Promise(function (resolve, reject) {
-
-    searchItems()
-      .then(function (tracks) {
-        setItems(tracks);
-        resolve(tracks);
-      });
+    console.log('---- init -----');
+    console.log(_tracks.length);
+    resolve(_tracks);
   });
 }
 
-function searchItems(q = 'linkin park') {
-  return new Promise(function (resolve, reject) {
-    var baseUrl = 'https://api.spotify.com/v1/search',
-      query = '?q=' + q + '&type=track',
-      url = baseUrl + query;
 
-    fetch(url)
-      .then(response => response.json())
-      .then(function (data) {
-        if (data.tracks.items.length) {
-          resolve(data.tracks.items);
-        }
-      })
-      .catch(function (error) {
-        console.log('Request failed', error);
-        reject('Request failed', error);
-      });
+function getPlaylist() {
+  var pl = localStorage.getItem('playlist');
+  return pl ? JSON.parse(pl) : [];
+}
+
+function savePlaylist() {
+  localStorage.setItem('playlist', JSON.stringify(_tracks));
+}
+
+
+function addTrack(track) {
+  console.log('--- addTrack ---');
+  var exist = _tracks.findIndex(function(item, index, array){
+    return item.id == track.id;
   });
+
+  if (!(exist == -1)) return null;
+
+  _tracks.push(track);
+  savePlaylist();
 }
 
 function play() {
   _currentTrack = _tracks[0];
   _tracks = [_tracks[0]];
-}
-
-function setItems(tracks) {
-  console.log(' ---  setItems ----');
-  _tracks = tracks;
-  console.log(' ---  setItems ----');
 }
 
 function update(id, updates) {
@@ -80,7 +74,6 @@ function getCurrentTrack() {
 }
 
 var PlayerStore = Object.assign({}, EventEmitter.prototype, {
-
   getState: function () {
     return {
       tracks: getAllTracks(),
@@ -106,24 +99,27 @@ AppDispatcher.register(function (action) {
 
   switch (action.actionType) {
     case PlayerConstants.PLAYER_INIT:
-      console.log('case PlayerConstants.PLAYER_PLAY ' + PlayerConstants.PLAYER_INIT);
-      setInitialState().then(function () {
+      console.log('case PlayerConstants.PLAYER_INIT ' + PlayerConstants.PLAYER_INIT);
+      init().then(function () {
         PlayerStore.emitChange();
       });
       break;
+
+    case PlayerConstants.PLAYER_ADD:
+      console.log('case PlayerConstants.PLAYER_ADD ' + PlayerConstants.PLAYER_ADD);
+      addTrack(action.item);
+      PlayerStore.emitChange();
+      break;
+
     case PlayerConstants.PLAYER_PLAY:
       console.log('case PlayerConstants.PLAYER_PLAY ' + PlayerConstants.PLAYER_PLAY);
       play();
       PlayerStore.emitChange();
       break;
-    case PlayerConstants.PLAYER_SET_ITEMS:
-      console.log('case PlayerConstants.PLAYER_PLAY ' + PlayerConstants.PLAYER_PLAY);
-      setItems(action);
-      PlayerStore.emitChange();
-      break;
+
 
     default:
-    // no op
+
   }
 });
 
