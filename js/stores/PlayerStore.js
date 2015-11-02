@@ -7,6 +7,9 @@ var CHANGE_EVENT = 'change',
     _tracks = getPlaylist(),
     _currentTrack = {};
 
+var _playerAudio = new Audio(),
+    _isPlaying = false;
+
 function init() {
   return new Promise(function (resolve, reject) {
     console.log('---- init -----');
@@ -15,6 +18,13 @@ function init() {
   });
 }
 
+function getAllTracks() {
+  return _tracks;
+}
+
+function getCurrentTrack() {
+  return _currentTrack;
+}
 
 function getPlaylist() {
   var pl = localStorage.getItem('playlist');
@@ -24,7 +34,6 @@ function getPlaylist() {
 function savePlaylist() {
   localStorage.setItem('playlist', JSON.stringify(_tracks));
 }
-
 
 function addTrack(track) {
   console.log('--- addTrack ---');
@@ -38,40 +47,41 @@ function addTrack(track) {
   savePlaylist();
 }
 
-function play() {
-  _currentTrack = _tracks[0];
-  _tracks = [_tracks[0]];
-}
-
-function update(id, updates) {
-  _todos[id] = assign({}, _todos[id], updates);
-}
-
-function updateAll(updates) {
-  for (var id in _todos) {
-    update(id, updates);
+function play(track) {
+  if (track && _currentTrack.id != track.id) {
+    _currentTrack = track;
+    _playerAudio.src = _currentTrack.preview_url;
+    _playerAudio.pause();
+    _isPlaying = false
   }
+
+  _isPlaying ? _playerAudio.pause() : _playerAudio.play();
+  _isPlaying = !_isPlaying;
 }
 
-function destroy(id) {
-  delete _todos[id];
-}
+function next() {
+  var currentTrackIndex = _tracks.findIndex(function(track){ return track.id == _currentTrack.id}),
+      nextTrack = null;
 
-function destroyCompleted() {
-  for (var id in _todos) {
-    if (_todos[id].complete) {
-      destroy(id);
-    }
+  if (currentTrackIndex != -1) {
+    nextTrack = _tracks[currentTrackIndex + 1] ? _tracks[currentTrackIndex + 1] : _tracks[0];
   }
+
+  play(nextTrack);
 }
 
-function getAllTracks() {
-  return _tracks;
+function prev() {
+  var currentTrackIndex = _tracks.findIndex(function(track){ return track.id == _currentTrack.id}),
+      prevTrack = null;
+
+  if (currentTrackIndex != -1) {
+    prevTrack = _tracks[currentTrackIndex - 1] ? _tracks[currentTrackIndex - 1] : _tracks[_tracks.length - 1];
+  }
+
+  play(prevTrack);
 }
 
-function getCurrentTrack() {
-  return _currentTrack;
-}
+
 
 var PlayerStore = Object.assign({}, EventEmitter.prototype, {
   getState: function () {
@@ -113,14 +123,25 @@ AppDispatcher.register(function (action) {
 
     case PlayerConstants.PLAYER_PLAY:
       console.log('case PlayerConstants.PLAYER_PLAY ' + PlayerConstants.PLAYER_PLAY);
-      play();
+      play(action.item);
       PlayerStore.emitChange();
       break;
 
+    case PlayerConstants.PLAYER_NEXT:
+      console.log('case PlayerConstants.PLAYER_NEXT ' + PlayerConstants.PLAYER_NEXT);
+      next();
+      PlayerStore.emitChange();
+      break;
+
+    case PlayerConstants.PLAYER_PREV:
+      console.log('case PlayerConstants.PLAYER_NEXT ' + PlayerConstants.PLAYER_PREV);
+      prev();
+      PlayerStore.emitChange();
+      break;
 
     default:
-
   }
+
 });
 
 module.exports = PlayerStore;

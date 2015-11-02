@@ -2,11 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Player from './Player.react';
+//import Voice from './Voice';
 import PlayerThumb from './PlayerThumb.react';
 import PlayerStore from '../stores/PlayerStore';
 import PlayerActions from '../actions/PlayerActions';
 
 import Search from './Search.react';
+
+//var voiceRecognition = new Voice();
+
 
 function getTodoState() {
   return PlayerStore.getState();
@@ -14,6 +18,7 @@ function getTodoState() {
 
 function searchTracks(query, one) {
 }
+
 
 class App extends React.Component {
   constructor() {
@@ -36,10 +41,10 @@ class App extends React.Component {
   render() {
     console.warn('App : render');
     return (
-      <div className="wrap">
-        <Player />
-        <Search />
-      </div>
+        <div className="wrap">
+          <Player />
+          <Search />
+        </div>
     );
   }
 

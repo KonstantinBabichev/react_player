@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import PlayerThumb from './PlayerThumb.react';
-//import PlayerStore from '../stores/PlayerStore';
 import PlayerActions from '../actions/PlayerActions';
 
 var _results = [],

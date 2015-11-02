@@ -5,9 +5,35 @@ import PlayerThumb from './PlayerThumb.react';
 import PlayerStore from '../stores/PlayerStore';
 import PlayerActions from '../actions/PlayerActions';
 
+var _playerAudio = new Audio(),
+    _tracks = [],
+    _currentTrack = {},
+    _isPlaying = false;
+
 function getPlayerState() {
   return PlayerStore.getState();
 }
+
+function play(track) {
+  PlayerActions.play(track);
+}
+
+function pause() {
+  _isPlaying ? _playerAudio.pause() : _playerAudio.play();
+  _isPlaying = !_isPlaying;
+}
+
+
+
+function clear() {
+
+}
+
+function init() {
+
+}
+
+
 
 class Player extends React.Component {
   constructor() {
@@ -19,26 +45,23 @@ class Player extends React.Component {
   }
 
   _handleThumbClick(item) {
-    console.warn('Player : _handleThumbClick');
-    var _playerAudio = new Audio();
-    _playerAudio.src = item.preview_url;
-    _playerAudio.play();
+    play(item);
   }
 
   _play() {
-    console.log('- _play -');
-    console.log('- _play -');
+    play();
   }
 
   _next() {
-    console.log('- _next -');
+    PlayerActions.next();
   }
 
   _prev() {
-    console.log('- _prev -');
+    PlayerActions.prev();
   }
 
   _clear() {
+    PlayerActions.clearPlaylist();
     console.log('- _clear -');
   }
 
@@ -62,7 +85,8 @@ class Player extends React.Component {
     //if (tracks.length < 1) return null;
 
     tracks = tracks.map(function (track, i) {
-      return <PlayerThumb onClick={self._handleThumbClick.bind(this, track)} key={i} track={track}/>;
+      var current = track == self.state.currentTrack;
+      return <PlayerThumb onClick={self._handleThumbClick.bind(this, track)} key={i} track={track} isActive={current}/>;
     });
 
     return (
